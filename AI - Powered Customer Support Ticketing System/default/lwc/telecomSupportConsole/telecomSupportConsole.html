@@ -1,0 +1,114 @@
+<template>
+    <lightning-card title="Telecom Support Console" icon-name="standard:case">
+        <template if:true={isBusy}><lightning-spinner alternative-text="Saving" size="small"></lightning-spinner></template>
+        <div class="toolbar slds-p-horizontal_medium slds-p-bottom_small">
+            <lightning-input type="search" label="Search tickets" variant="label-hidden"
+                placeholder="Search subject or description" value={searchTerm}
+                onchange={handleSearch}></lightning-input>
+            <lightning-button label="New Ticket" variant="brand" onclick={openNewTicket}></lightning-button>
+        </div>
+
+        <div class="metrics slds-p-horizontal_medium">
+            <article class="metric"><span>Total tickets</span><strong>{totalCount}</strong></article>
+            <article class="metric"><span>Open</span><strong>{openCount}</strong></article>
+            <article class="metric"><span>High / Critical</span><strong>{urgentCount}</strong></article>
+        </div>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-around_medium error">{errorMessage}</div>
+        </template>
+
+        <div class="content-grid slds-p-around_medium">
+            <section class="ticket-list">
+                <h2 class="section-title">Recent tickets</h2>
+                <template if:true={isLoading}><p class="empty-state">Loading tickets…</p></template>
+                <template for:each={filteredTickets} for:item="ticket">
+                    <button key={ticket.id} class={ticket.rowClass} data-id={ticket.id}
+                        onclick={selectTicket}>
+                        <span class="ticket-subject">{ticket.subject}</span>
+                        <span class="ticket-meta">{ticket.number} · {ticket.category} · {ticket.status}</span>
+                        <span class={ticket.priorityClass}>{ticket.priority}</span>
+                    </button>
+                </template>
+                <template if:false={hasTickets}>
+                    <p class="empty-state">No tickets found. Create a ticket or adjust the search.</p>
+                </template>
+            </section>
+
+            <section class="ticket-detail">
+                <template if:true={selectedTicket}>
+                    <div class="detail-header">
+                        <div>
+                            <p class="eyebrow">{selectedTicket.number}</p>
+                            <h2>{selectedTicket.subject}</h2>
+                        </div>
+                        <span class={selectedTicket.priorityClass}>{selectedTicket.priority}</span>
+                    </div>
+                    <p class="description">{selectedTicket.description}</p>
+                    <div class="detail-fields">
+                        <div><span>Status</span><strong>{selectedTicket.status}</strong></div>
+                        <div><span>Category</span><strong>{selectedTicket.category}</strong></div>
+                        <div><span>Customer</span><strong>{selectedTicket.customer}</strong></div>
+                    </div>
+                    <div class="detail-fields">
+                        <div>
+                            <span>SLA deadline</span>
+                            <strong>
+                                <template if:true={selectedTicket.sla}>
+                                    <lightning-formatted-date-time value={selectedTicket.sla} year="numeric" month="short"
+                                        day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                                </template>
+                                <template if:false={selectedTicket.sla}>Not set</template>
+                            </strong>
+                        </div>
+                        <div>
+                            <lightning-combobox label="Change status" value={selectedTicket.status}
+                                options={statusOptions} onchange={handleStatusChange}></lightning-combobox>
+                        </div>
+                    </div>
+                    <div class="ai-panel">
+                        <div class="ai-title"><lightning-icon icon-name="utility:einstein"
+                            size="small" alternative-text="AI"></lightning-icon>
+                            <h3>AI assistance · baseline rules</h3></div>
+                        <div class="suggestion-row"><span>Suggested category</span><strong>{suggestion.category}</strong></div>
+                        <div class="suggestion-row"><span>Recommended priority</span><strong>{suggestion.priority}</strong></div>
+                        <div class="suggestion-row"><span>Customer sentiment</span><strong>{suggestion.sentiment}</strong></div>
+                        <p class="rationale">{suggestion.rationale}</p>
+                        <lightning-textarea label="Suggested response" value={suggestion.suggestedResponse}
+                            onchange={handleResponseChange}></lightning-textarea>
+                        <div class="actions">
+                            <lightning-button label="Reclassify" onclick={runSuggestion}></lightning-button>
+                            <lightning-button label="Use suggestion" variant="brand"
+                                onclick={useSuggestion}></lightning-button>
+                        </div>
+                        <p class="disclaimer">Review AI suggestions before applying or sending them. Using a suggestion saves it to the ticket and recalculates the SLA. Live Agentforce is configured separately.</p>
+                    </div>
+                </template>
+                <template if:false={selectedTicket}>
+                    <div class="empty-detail">Select a ticket to inspect details and AI suggestions.</div>
+                </template>
+            </section>
+        </div>
+    </lightning-card>
+
+    <template if:true={showNewTicket}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-label="New ticket"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Create support ticket</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-input label="Subject" value={draftSubject} onchange={changeDraftSubject} required></lightning-input>
+                    <lightning-textarea label="Description" value={draftDescription} onchange={changeDraftDescription}></lightning-textarea>
+                    <lightning-input label="Customer name" value={draftCustomer} onchange={changeDraftCustomer}></lightning-input>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeNewTicket}></lightning-button>
+                    <lightning-button label="Create ticket" variant="brand" onclick={createTicket}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

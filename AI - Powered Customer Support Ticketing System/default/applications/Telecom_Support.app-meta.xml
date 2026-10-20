@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#0176D3</headerColor>
+        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+    </brand>
+    <description>AI-assisted telecom customer support console and tickets.</description>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <label>Telecom Support</label>
+    <navType>Standard</navType>
+    <tabs>Telecom_Support_Console</tabs>
+    <tabs>Support_Ticket__c</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>
