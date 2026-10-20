@@ -1,0 +1,6 @@
+Subject__c,Description__c,Category__c,Priority__c,Status__c,Customer_Name__c,Customer_Sentiment__c
+"No internet connection","Customer cannot connect to the internet since this morning.",Network Issue,High,New,Airtel Customer,Negative
+"Billing amount incorrect","The latest bill appears higher than expected.",Billing,Medium,In Progress,Prepaid Customer,Neutral
+"SIM activation request","SIM activation has not completed after purchase.",SIM / Activation,Medium,New,New Subscriber,Neutral
+"Network slow in my area","Network speed has been very slow in my area.",Network Issue,High,In Progress,Postpaid Customer,Negative
+"Upgrade to 5G plan","Customer wants information about a 5G plan upgrade.",Service Request,Low,Resolved,Premium Subscriber,Positive
